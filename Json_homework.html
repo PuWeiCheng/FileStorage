@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0px;
+            padding: 0px;
+        }
+        .header{
+            display: flex;
+            width: auto;
+            margin: 0px 20px;
+            margin-bottom: 10px;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .container{
+            margin: auto;
+            width: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0px 10px;
+            flex-direction: row-reverse;
+        }
+        .p {
+            font-size: 40px;
+            font-weight:500;
+        }
+        #color{
+            border-radius: 2px ;
+            width:150px;
+            height:50px;
+        }
+        #storage{
+            border-radius: 2px ;
+            width:150px;
+            height:50px;
+        }
+        #network{
+            border-radius: 2px ;
+            width:150px;
+            height:50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ipad型號</h1>
+        <h2 id="price"></h2>
+    </div>
+    <div class="container">
+        <div class="right">
+            <div class="color">
+                <p>外觀。挑選喜歡的顏色</p>
+                <button id="color" value="太空灰色">太空灰色</button>
+                <button id="color" value="藍色">藍色</button>
+                <button id="color" value="粉紅色">粉紅色</button>
+                <button id="color" value="紫色">紫色</button>
+                <button id="color" value="星光色">星光色</button>
+            </div>
+            <div class="storge">
+                <p>儲存裝置。選擇需要的儲存空間大小。</p>
+                <button id="storage"  value="64GB">64GB</button>
+                <button id="storage"  value="256GB">256GB</button>
+            </div>
+            <div class="internet">
+                <p>連線能力。選擇連線方式。</p>
+                <button  id="network" value="Wi-Fi">wifi</button>
+                <button  id="network" value="Cellular">個人熱點</button>
+            </div>
+        </div>
+        <div class="left">
+            <div class="picture" id="pic"></div>
+            <h3 id ="msg"></h3>
+        </div>
+    </div>
+    
+
+
+    <script>
+        // 讀取github JSON檔案
+        const url = "https://raw.githubusercontent.com/PuWeiCheng/FileStorage/master/ipadair.json";
+        // 定義button變數
+        let color, storage, network, ipadArray;
+        // 取得價錢、文字、圖片元素
+        let price = document.getElementById("price");
+        let msg = document.getElementById("msg");
+        let pic = document.getElementById("pic");
+        // 迴圈用ID選擇所有顏色按鈕並且得到每個按鈕設定好的變數後進行篩選印出
+        document.querySelectorAll("#color").forEach(all_color_bottom => all_color_bottom.addEventListener('click', () => {
+            color = all_color_bottom.value;
+            ipadair_filter();
+        }));
+        // 迴圈用ID選擇所有容量按鈕並且得到每個按鈕設定好的變數後進行篩選印出
+        document.querySelectorAll("#storage").forEach(all_storage_bottom => all_storage_bottom.addEventListener('click', () => {
+            storage = all_storage_bottom.value;
+            ipadair_filter();
+        }));
+        // 迴圈用ID選擇所有網路按鈕並且得到每個按鈕設定好的變數後進行篩選印出
+        document.querySelectorAll("#network").forEach(all_network_bottom => all_network_bottom.addEventListener('click', () => {
+            network = all_network_bottom.value;
+            ipadair_filter();
+        }));
+        // 函式是在做得到JSON資料並且做篩選印出所需要的資料
+        function ipadair_filter() {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                ipadArray = this.response;
+                const select = ipadArray.filter(item => item.color == color && item.storage == storage && item.network == network);
+                if (Object.keys(select).length != 0) {
+                    select.forEach(value => {
+                        price.innerText = `NT$${value.price}起`;
+                        msg.innerText = `iPad Air ${value.network} ${value.storage} ${value.color}`;
+                        pic.innerHTML = `<img src="${value.picture}">`;
+                    });
+                }
+            }
+            xhr.open("GET", url);
+            xhr.responseType = "json";
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
